@@ -3,6 +3,7 @@ const dotenv = require('dotenv')
 dotenv.config()
 
 const authMiddleWare = (req, res,next) => {
+   
     // console.log('checkToken',req.headers.token)
     // console.log('Headers:', req.headers);
 
@@ -23,8 +24,7 @@ const authMiddleWare = (req, res,next) => {
             })
         }
         // console.log('user',user)
-        const { payload } = user
-        if (payload?.isAdmin) {
+        if (user?.isAdmin) {
             next()
         } else {
             return res.status(404).json({
@@ -46,8 +46,7 @@ const authUserMiddleWare = (req, res, next) => {
             })
         }
         console.log('user',user)
-        const {payload}=user
-        if (payload?.isAdmin || payload?.id === userId) {
+        if (user?.isAdmin || user?.id === userId) {
             next()
         } else {
             return res.status(404).json({

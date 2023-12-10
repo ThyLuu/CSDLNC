@@ -4,7 +4,8 @@ import { StyleNameProduct, WrapperCardStyle, WrapperPriceDiscountText, WrapperPr
 import { StarFilled } from '@ant-design/icons'
 import logo from '../../assets/images/Hot.png'
 
-const CardComponent = () => {
+const CardComponent = (props) => {
+    const {countInStock,description,name,image,price,rating,type, discount, selled} = props
     return (
         <WrapperCardStyle
             hoverable
@@ -14,16 +15,16 @@ const CardComponent = () => {
             cover={<img alt="example" src="https://caphecaonguyen.vn/uploads/details/2021/08/images/cach-pha-ca-phe-capuchino-khong-can-may-nhanh-nhat1.jpg.webp" />}>
 
             <img src={logo} alt='logo' style={{width: '68px', height: '14px', position: 'absolute', top: -1, left: -1, borderTopLeftRadius: '3px'}}/>
-            <StyleNameProduct>Cappuccino</StyleNameProduct>
+            <StyleNameProduct>{name}</StyleNameProduct>
             <WrapperReportText>
                 <span style={{marginRight: '4px'}}>
-                    <span>4.8 </span> <StarFilled style={{fontSize: '12px', color: 'yellow'}}/>
+                    <span>{rating} </span> <StarFilled style={{fontSize: '12px', color: 'yellow'}}/>
                 </span>
-                <span> | Đã bán 100+</span>
+                <span> | Đã bán {selled || 1000}+</span>
             </WrapperReportText>
 
-            <WrapperPriceText>65.000đ 
-                <WrapperPriceDiscountText>-5%</WrapperPriceDiscountText>
+            <WrapperPriceText>{price}
+                <WrapperPriceDiscountText>{discount || 5}%</WrapperPriceDiscountText>
             </WrapperPriceText>
 
         </WrapperCardStyle>

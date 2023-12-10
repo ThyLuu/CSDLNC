@@ -6,7 +6,6 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@mui/material/Typography';
-// import Box from '@material-ui/core/Box';
 
 
 const NavbarComponent = () => {
@@ -132,12 +131,10 @@ const NavbarComponent = () => {
                 </Button>
                 <Menu
                 anchorEl={
-                    // Check to see if the anchor is set.
                     anchorEl && anchorEl[index]
                 }
                 keepMounted
                 open={
-                    // Likewise, check here to see if the anchor is set.
                     Boolean(anchorEl && anchorEl[index])
                 }
                 onClose={handleClose}
@@ -151,7 +148,6 @@ const NavbarComponent = () => {
                     key={menuindex}
                     selected={menuitems === item}
                     onClick={handleClose}
-                    
                     >
                     {menuitems.title}
                     </MenuItem>

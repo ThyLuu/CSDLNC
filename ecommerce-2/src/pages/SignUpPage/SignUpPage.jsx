@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { WrapperContainerLeft, WrapperContainerRight, WrapperTextLight } from './style'
 import InputForm from '../../components/InputForm/InputForm'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
@@ -10,23 +10,43 @@ import { Button, Dialog, DialogContent, DialogTitle, TextField, InputAdornment, 
 import { Typography } from 'antd';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import * as UserService from'../../service/UserService'
+import { useMutationHooks } from '../../hooks/userMutationHook'
+import Loading from '../../components/LoadingComponent/Loading'
+import * as message from '../../components/Message/Message'
+
+
 
 const SignUpPage = () => {
   const [email, setEmail] = useState('');
+
+  const [password,setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState(false);
 
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [password, setPassword] = useState('');
+  const [success, setIsSuccess] = useState(false);
+  const [error, setIsError] = useState(false);
 
   const handleOnchangePassword = (value) => {
     setShowPassword(!showPassword);
   }
 
-  const handleLogin = () => {
-    // Xử lý đăng nhập 
+  const handleOnchangeConfirmPassword = (value) => {
+    setShowConfirmPassword(!showConfirmPassword);
+  }
+
+  const handleSignup = async () => {
+    // Xử lý đăng kí 
+    mutation.mutate({
+      email,
+      password,
+      confirmPassword
+    })
     console.log('email:', email);
     console.log('Password:', password);
+    console.log('Confirm Password:',confirmPassword);
   };
 
 
@@ -36,25 +56,27 @@ const SignUpPage = () => {
       navigate('/sign-in')
   }
 
-  const handleOnchangeEmail = (event)=>{
-    setEmail(event.target.value);
-    setError(false);
+  const mutation = useMutationHooks(
+    data => UserService.signupUser(data)
+  )
 
- }
+  const {data, isPending, isSuccess, isError} = mutation
 
- const handleSubmit = () => {
-  if (email.trim() === '') {
-    setError(true);
-  } else {
-    // Thực hiện các hành động khi dữ liệu hợp lệ
-    console.log('Dữ liệu hợp lệ:', email);
-  }
-};
+  useEffect(() => {
+    if(isSuccess){
+      message.success()
+      handleNavigateLogIn()
+    }
+    else if (isError){
+      message.error()
+    }
+  }, [isSuccess,isError])
 
+ 
 
   return (
     <div style={{display:'flex', alignItems:'center',justifyContent:'center', background:'rgba(0,0,0,0.3', height:'100vh'}}>
-      <div style={{width:'800px',height:'500px', borderRadius:'20px', background:'#FFF8EA', display:'flex'}}>
+      <div style={{width:'800px',height:'550px', borderRadius:'20px', background:'#FFF8EA', display:'flex'}}>
       <WrapperContainerLeft>
       <DialogTitle sx={{
         backgroundColor:'#FFF8EA', 
@@ -69,9 +91,6 @@ const SignUpPage = () => {
           margin="normal"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          
-          error={error}
-          helperText={error ? 'Vui lòng nhập thông tin' : ''}
           varriant="filled" 
           sx={{
             backgroundColor:'#ff8e7',
@@ -144,12 +163,12 @@ const SignUpPage = () => {
 
         <TextField
           label="Nhập lại mật khẩu"
-          type={showPassword ? 'text' : 'password'}
+          type={showConfirmPassword ? 'text' : 'password'}
           variant="outlined"
           fullWidth
           margin="normal"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
           sx={{
             backgroundColor:'#ff8e7',
 
@@ -176,8 +195,8 @@ const SignUpPage = () => {
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={handleOnchangePassword}>
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                <IconButton onClick={handleOnchangeConfirmPassword}>
+                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
               ),
@@ -193,9 +212,11 @@ const SignUpPage = () => {
             ><u style={{color:'#38220f', fontWeight:'bold'}}> Đăng nhập </u> 
           </button>ở đây nha 
         </div>
-      
+        
+        {data?.status=='ERR' && <span style={{color:"red", fontSize:"14px", marginTop:"20px"}}>{data?.message}</span>}
+        <Loading isPending={isPending}>
         <Typography align='center'>
-          <Button variant="contained" onClick={handleLogin} 
+          <Button variant="contained" onClick={handleSignup} 
             sx={{
               backgroundColor:'#38220f',
               marginTop: '30px',
@@ -207,16 +228,17 @@ const SignUpPage = () => {
             Đăng Kí
           </Button>
         </Typography>
+        </Loading>
       </WrapperContainerLeft>
 
-      <WrapperContainerRight>
+      {/* <WrapperContainerRight>
              <Image 
               src={imageLogo} 
               alt='Logo-Cái-Quán-Cà-Phê' 
               preview={false}
               height="300px" 
               width="300px"/>
-      </WrapperContainerRight>
+      </WrapperContainerRight> */}
     </div>
 
     </div>

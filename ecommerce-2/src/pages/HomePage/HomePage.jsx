@@ -8,32 +8,46 @@ import respect from '../../assets/images/Respect.png'
 import CardComponent from '../../components/CardComponent/CardComponent'
 import NavbarComponent from '../../components/NavbarComponent/NavbarComponent'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
+import * as ProductService from '../../service/ProductService'
+import { useQuery } from '@tanstack/react-query'
 
 const HomePage = () => {
+
+  
+  const fetchProductAll = async () => {
+    const res = await ProductService.getAllProduct()
+    console.log('res',res)
+    return res
+  }
+
+  const { data: products } = useQuery({ queryKey: ['products'], queryFn: fetchProductAll });
+  console.log('data',products)
  
   return (
     <>
         <StyledBody>
         <NavbarComponent/>
         <SliderComponent arrImages={[love, passion, respect]} />
-
-        <div style={{marginTop:'50px'}}>
         <WrapperProducts>
-          <CardComponent />
-          <CardComponent />
-          <CardComponent />
-          <CardComponent />
-          <CardComponent />
-          <CardComponent />
-          <CardComponent />
-          <CardComponent />
-          <CardComponent />
-          <CardComponent />
-          <CardComponent />
-          <CardComponent />
+          {products?.data?.map((product)=>{
+            return (
+              <CardComponent 
+              key={product._id}
+              countInStock={product.countInStock}
+              description={product.description} 
+              image={product.image} 
+              name={product.name} 
+              price={product.price}
+              rating = {product.rating}
+              type={product.type}
+              discount= { product.discount }
+              selled={ product.selled}   />
+            )
+             
+          })}
+         
         </WrapperProducts>
-        </div>
-
+        
         <div style={{width: '100%', display: 'flex', justifyContent: 'center', marginTop: '30px'}}>
           <WrapperButtonMore
             textButton="Xem thêm"

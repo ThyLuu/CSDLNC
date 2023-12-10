@@ -4,12 +4,11 @@ import { WrapperInputStyle } from './style';
 
 
 const InputForm = (props) => {
-    const {valueInput,setValueInput} = useState('')
-    const {placeholder} = props
+    const {placeholder='Nhập text',...rests} = props 
 
   return (
    
-    <WrapperInputStyle placeholder={placeholder} valueInput={valueInput}/> 
+    <WrapperInputStyle placeholder={placeholder} valueInput={props.value}/> 
     
 
   )

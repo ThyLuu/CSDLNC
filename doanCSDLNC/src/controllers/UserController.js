@@ -4,24 +4,24 @@ const bcrypt = require("bcrypt")
 const { genneralAccessToken, genneralRefreshToken,refreshTokenJwtService } = require("../services/JWTService")
 const createUser = async(req, res) => {
     try {
-        const { name, email, password, confirmPassword, phone} = req.body
+        const { email, password, confirmPassword} = req.body
         const reg = /^\w+@\w+\.com$/i
         const isCheckEmail = reg.test(email) 
-        if(!name || !email || !password || !confirmPassword || !phone){
+        if(email===null || password===null ){
             return res.status(200).json({
                 status:'ERR',
-                messages:'the input is required'
+                messages:'Không được để trống!'
             })
         } else if (!isCheckEmail) {
             return res.status(200).json({
                 status: 'ERR',
-                message: 'The input is email'
+                message: 'Tên tài khoản phải là định dạng email!!!'
           })
         }
           else if (password !== confirmPassword) {
             return res.status(200).json({
                 status: 'ERR',
-                message: 'The password is equal confirmPassword'
+                message: 'Mật khẩu không chính xác!!!'
             })
         }
         //console.log('isCheckEmail',isCheckEmail)
@@ -38,18 +38,19 @@ const signinUser = async (req, res) => {
       const { email, password } = req.body
       const reg =/^\w+@\w+\.com$/i
       const isCheckEmail = reg.test(email)
-      if (!email || !password) {
+      if (email ===null|| password===null) {
           return res.status(200).json({
               status: 'ERR',
-              message: 'The input is required'
+              message: 'Không được để trống!'
           })
       } else if (!isCheckEmail) {
           return res.status(200).json({
               status: 'ERR',
-              message: 'The input is email'
+              message: 'Tên tài khoản phải là định dạng email!!!'
           })
       }
       const response = await UserService.signinUser(req.body)
+    //   console.log('response',response)
       const { refresh_token, ...newReponse } = response
       res.cookie('refresh_token', refresh_token, {
           httpOnly: true,
@@ -132,8 +133,9 @@ const getDetailsUser = async (req, res) => {
 }
 
 const refreshToken = async (req, res) => {
+    console.log('req.cookies.refresh_token',req.cookies.refresh_token)
     try {
-        let token = req.headers.token.split(' ')[1]
+        const token = req.cookies.refresh_token
         if (!token) {
             return res.status(200).json({
                 status: 'ERR',
@@ -142,6 +144,22 @@ const refreshToken = async (req, res) => {
         }
         const response = await JwtService.refreshTokenJwtService(token)
         return res.status(200).json(response)
+        return 
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        })
+    }
+}
+
+const logoutUser = async (req, res) => {
+    console.log('req.cookies.refresh_token',req.cookies.refresh_token)
+    try {
+        res.clearCookie('refresh-token')
+        return res.status(200).json({
+            status:'OK',
+            message:'Đăng xuất thành công!'
+        })
     } catch (e) {
         return res.status(404).json({
             message: e
@@ -152,6 +170,7 @@ const refreshToken = async (req, res) => {
 module.exports = {
     createUser,
     signinUser,
+    logoutUser,
     updateUser,
     deleteUser,
     getAllUser,
